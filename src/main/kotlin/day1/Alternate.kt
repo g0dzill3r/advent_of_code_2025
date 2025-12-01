@@ -12,19 +12,23 @@ fun main () {
 
     // Part 1
 
-    val safe1 = Safe { cur, done ->
-        cur == 0 && done
+    val part1 = run {
+        val safe = Safe { cur, done ->
+            cur == 0 && done
+        }
+        safe.turn (els)
     }
-    safe1.turn (els)
-    println (safe1)
+    println (part1)
 
     // Part 2
 
-    val safe2 = Safe { cur, done ->
-        cur == 0
+    val part2 = run {
+        val safe = Safe { cur, done ->
+            cur == 0
+        }
+        safe.turn (els)
     }
-    safe2.turn (els)
-    println (safe2)
+    println (part2)
     return
 }
 
@@ -38,9 +42,9 @@ class Safe (
     var cur: Int = 50
     var count: Int = 0
 
-    fun turn (recs: List<Turn>) {
+    fun turn (recs: List<Turn>): Int {
         recs.forEach { turn (it) }
-        return
+        return count
     }
 
     fun turn (rec: Turn) {

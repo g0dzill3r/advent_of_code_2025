@@ -8,14 +8,14 @@ val SAMPLE = false;
 
 fun main () {
     val input = InputUtil.getInput (DAY, SAMPLE);
-    val els = input.split ("\n").map { Rec.parse (it) }
+    val turns = input.split ("\n").map { Turn.parse (it) }
 
     // Part 1
 
     var cur = 50
     var count = 0
 
-    els.forEach {
+    turns.forEach {
         when (it.direction) {
             Direction.LEFT -> {
                 cur -= it.count
@@ -42,7 +42,7 @@ fun main () {
     cur = 50
     count = 0
 
-    els.forEach {
+    turns.forEach {
         for (i in 0 until it.count) {
             when (it.direction) {
                 Direction.LEFT -> {
@@ -82,13 +82,13 @@ enum class Direction {
     }
 }
 
-data class Rec (
+data class Turn (
     val direction: Direction,
     val count: Int
 ) {
     companion object {
-        fun parse (str: String): Rec {
-            return Rec (
+        fun parse (str: String): Turn {
+            return Turn (
                 Direction.parse (str[0]),
                 str.substring (1, str.length).toInt ())
         }

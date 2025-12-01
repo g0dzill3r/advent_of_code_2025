@@ -8,7 +8,7 @@ import util.InputUtil
 
 fun main () {
     val input = InputUtil.getInput (DAY, SAMPLE);
-    val els = input.split ("\n").map { Rec.parse (it) }
+    val els = input.split ("\n").map { Turn.parse (it) }
 
     // Part 1
 
@@ -16,7 +16,7 @@ fun main () {
         cur == 0 && done
     }
     safe1.turn (els)
-    println ("part1=${safe1.count}")
+    println (safe1)
 
     // Part 2
 
@@ -24,22 +24,26 @@ fun main () {
         cur == 0
     }
     safe2.turn (els)
-    println ("part2=${safe2.count}")
+    println (safe2)
     return
 }
 
-data class Safe (
+/**
+ * The safe object.
+ */
+
+class Safe (
     val func: (Int, Boolean) -> Boolean
 ) {
     var cur: Int = 50
     var count: Int = 0
 
-    fun turn (recs: List<Rec>) {
+    fun turn (recs: List<Turn>) {
         recs.forEach { turn (it) }
         return
     }
 
-    fun turn (rec: Rec) {
+    fun turn (rec: Turn) {
         for (i in 0 until rec.count) {
             when (rec.direction) {
                 Direction.LEFT -> cur --
@@ -56,6 +60,8 @@ data class Safe (
         }
         return
     }
+
+    override fun toString () = "count=$count"
 
     companion object {
         val POSITIONS = 100

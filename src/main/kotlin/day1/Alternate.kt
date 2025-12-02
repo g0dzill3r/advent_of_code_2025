@@ -23,7 +23,7 @@ fun main () {
     // Part 2
 
     val part2 = run {
-        val safe = Safe { cur, done ->
+        val safe = Safe { cur, _ ->
             cur == 0
         }
         safe.turn (els)

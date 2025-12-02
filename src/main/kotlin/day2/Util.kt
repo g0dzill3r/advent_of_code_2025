@@ -1,6 +1,8 @@
 package day2
 
-fun isValid (i: Long): Boolean {
+import java.util.regex.Pattern
+
+fun isValid1a (i: Long): Boolean {
     val s = i.toString()
     if (s.length % 2 == 1) {
         return true
@@ -13,7 +15,7 @@ fun isValid (i: Long): Boolean {
     }
 }
 
-fun isValid2 (i: Long): Boolean {
+fun isValid2a (i: Long): Boolean {
     val s = i.toString()
     val max = s.length / 2
     for (j in 0 until max) {

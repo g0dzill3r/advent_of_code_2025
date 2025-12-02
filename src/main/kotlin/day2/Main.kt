@@ -26,11 +26,12 @@ fun main () {
         println (total)
     }
 
-    process (els, ::isValid)
-    process (els, ::isValid2)
+    process (els, ::isValid1a)
+    process (els, ::isValid1b)
+
+    process (els, ::isValid2a)
+    process (els, ::isValid2b)
     return
 }
-
-
 
 // EOF

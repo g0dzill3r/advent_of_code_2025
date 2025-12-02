@@ -14,29 +14,20 @@ fun main () {
         }
     }
 
-    // part 1
-
-    var part1 = 0L
-    els.forEach { (a, b) ->
-        for (i in a .. b) {
-            if (! isValid (i)) {
-                part1 += i
+    val process = fun (pairs: List<List<Long>>, func: (Long) -> Boolean ) {
+        var total = 0L
+        pairs.forEach { (a, b) ->
+            for (i in a .. b) {
+                if (! func (i)) {
+                    total += i
+                }
             }
         }
+        println (total)
     }
-    println (part1)
 
-    // part 2
-
-    var part2 = 0L
-    els.forEach { (a, b) ->
-        for (i in a .. b) {
-            if (! isValid2 (i)) {
-                part2 += i
-            }
-        }
-    }
-    println (part2)
+    process (els, ::isValid)
+    process (els, ::isValid2)
     return
 }
 

@@ -1,18 +1,12 @@
 package day2
 
-import java.util.regex.Pattern
-
 fun isValid1a (i: Long): Boolean {
     val s = i.toString()
     if (s.length % 2 == 1) {
         return true
     }
     val half = s.substring (0, s.length / 2)
-    return if (s == "$half$half") {
-        false
-    } else {
-        true
-    }
+    return s != "$half$half"
 }
 
 fun isValid2a (i: Long): Boolean {

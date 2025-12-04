@@ -19,11 +19,9 @@ fun main () {
     }
 
     // part 1
-
     process (2)
 
     // part 2
-
     process (12)
     return
 }

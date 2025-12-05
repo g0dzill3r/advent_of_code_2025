@@ -25,7 +25,6 @@ fun main () {
         playfield.remove (accessible)
     }
     println (count)
-
     return
 }
 

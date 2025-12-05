@@ -35,8 +35,8 @@ fun main () {
         }
     }
 
-    val total = acc.foldRight (0L, { i, acc -> acc + i.last - i.start + 1 })
-    println (total)
+    val part2 = acc.foldRight (0L, { i, acc -> acc + i.last - i.first + 1 })
+    println (part2)
     return
 }
 

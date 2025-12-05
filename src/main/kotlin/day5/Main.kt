@@ -45,20 +45,17 @@ data class Dataset (
     val ingredients: List<Long>
 ) {
     fun isFresh (el: Long): Boolean {
-        for (check in fresh) {
-            if (check.contains (el)) {
-                return true
-            }
-        }
-        return false
+        return fresh.find {
+            it.contains (el)
+        } != null
     }
 
     companion object {
         fun parse (str: String): Dataset {
             val (a, b) = str.split ("\n\n")
             val fresh = a.split ("\n").map {
-                val (a, b) = it.split("-")
-                LongRange (a.toLong (), b.toLong ())
+                val (c, d) = it.split("-")
+                LongRange (c.toLong (), d.toLong ())
             }
             val ingredients = b.split ("\n").map { it.toLong() }
             return Dataset (fresh, ingredients)

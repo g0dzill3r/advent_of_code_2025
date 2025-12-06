@@ -9,12 +9,14 @@ val SAMPLE = false;
 
 fun main () {
     val input = InputUtil.getInput(DAY, SAMPLE);
-    val problems = Problems.parse (input)
 
     // part1
 
-    val part1 = problems.problems.foldRight (0L) { it, acc ->
-        acc + it.value
+    val part1 = run {
+        val problems = Problems.parse (input)
+        problems.problems.foldRight (0L) { it, acc ->
+            acc + it.value
+        }
     }
     println (part1)
 

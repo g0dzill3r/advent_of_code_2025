@@ -1,6 +1,6 @@
 package day6
 
-import util.InputUtil
+import util.toLongs
 import java.util.regex.Pattern
 
 data class Problems2 (
@@ -16,7 +16,7 @@ data class Problems2 (
                     val factors = group.substring (0, group.length - 1)
                         .trim ()
                         .split (Pattern.compile ("\\s+"))
-                        .map { it.toLong () }
+                        .toLongs ()
                     add (Problem (factors, op))
                 }
             }

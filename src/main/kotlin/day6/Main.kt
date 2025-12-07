@@ -89,13 +89,6 @@ data class Problem (
         }
 }
 
-fun List<Long>.product (): Long {
-    var total = 1L
-    forEach {
-        total *= it
-    }
-    return total
-}
-
+fun List<Long>.product (): Long = foldRight (1L) { i, acc -> acc * i }
 
 // EOF

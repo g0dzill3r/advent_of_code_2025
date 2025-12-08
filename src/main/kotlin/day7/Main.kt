@@ -4,7 +4,7 @@ import util.InputUtil
 
 
 val DAY = 7;
-val SAMPLE = false;
+val SAMPLE = true;
 
 fun main () {
     val input = InputUtil.getInput(DAY, SAMPLE);
@@ -16,6 +16,7 @@ fun main () {
         puzzle.run ()
     }
     println ("part1=$part1")
+    println ("part1=${puzzle.part1 ()}")
 
     // part2
 
@@ -114,6 +115,28 @@ class Puzzle (str: String) {
         // Return the total number of timelines that resulted
 
         return beams.foldRight (0L) { i, acc -> acc + i.count }
+    }
+
+    /**
+     * Alternate DFS approach to part1.
+     */
+
+    fun part1 (pos: Point = start, counter: Counter = Counter (), already: MutableList<Point> = mutableListOf ()): Int {
+        if (pos.row != lastRow) {
+            val next = pos.step
+            if (get (next) == Thing.SPLIT) {
+                if (! already.contains(next)) {
+                    next.split.forEach {
+                        part1 (it, counter, already)
+                    }
+                    already.add (next)
+                    counter.increment ()
+                }
+            } else {
+                part1 (next, counter, already)
+            }
+        }
+        return counter.count
     }
 
     private fun findStart (): Point {

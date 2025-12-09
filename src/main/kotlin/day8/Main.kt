@@ -89,19 +89,18 @@ data class Circuits (val input: String) {
      * sort them by increasing distance
      */
 
-    val distances: List<Edge>
-        get () {
-            val list = buildList {
-                for (i in 0 until points.size - 1) {
-                    for (j in i + 1 until points.size) {
-                        val p0 = points[i]
-                        val p1 = points[j]
-                        add (Edge (p0, p1, p0.distance (p1)))
-                    }
+    val distances by lazy {
+        val list = buildList {
+            for (i in 0 until points.size - 1) {
+                for (j in i + 1 until points.size) {
+                    val p0 = points[i]
+                    val p1 = points[j]
+                    add (Edge (p0, p1, p0.distance (p1)))
                 }
             }
-            return list.sortedBy { it.distance }
         }
+        list.sortedBy { it.distance }
+    }
 
     fun mermaid () {
         println ("flowchart")
@@ -119,7 +118,6 @@ data class Circuits (val input: String) {
         return
     }
 }
-
 
 data class Edge (val p0: Point, val p1: Point, val distance: Long)
 
@@ -149,9 +147,11 @@ data class Point (val x: Long, val y: Long, val z: Long) {
     fun isConnected(other: Point): Boolean = gather().contains(other)
 
     fun distance(other: Point): Long {
-        return (x - other.x).squared() +
-                (y - other.y).squared() +
-                (z - other.z).squared()
+        return (
+            (x - other.x).squared() +
+            (y - other.y).squared() +
+            (z - other.z).squared()
+        )
     }
 }
 

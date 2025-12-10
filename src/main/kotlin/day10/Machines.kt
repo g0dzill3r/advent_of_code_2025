@@ -1,6 +1,7 @@
 package day10
 
 import java.util.regex.Pattern
+import kotlin.math.min
 
 /**
  * The list of machines in the puzzle.
@@ -25,10 +26,16 @@ data class Machine (
     val expected: List<Boolean>,
     val buttons: List<List<Int>>,
     val joltages: List<Int>,
-    var state: MutableList<Boolean> = expected.map { false }.toMutableList ()
+    var state: MutableList<Boolean> = expected.map { false }.toMutableList (),
+    var voltages: MutableList<Int> = joltages.map { 0 }.toMutableList()
 ) {
     private fun reset () {
         state = expected.map { false }.toMutableList()
+        return
+    }
+
+    private fun resetJoltages () {
+        voltages = joltages.map { 0 }.toMutableList()
         return
     }
 
@@ -36,6 +43,15 @@ data class Machine (
         if (times % 2 == 1) {
             buttons[button].forEach {
                 state[it] = ! state[it]
+            }
+        }
+        return
+    }
+
+    private fun pressJoltages (button: Int, times: Int) {
+        if (times > 0) {
+            buttons[button].forEach {
+                voltages [it] += times
             }
         }
         return
@@ -57,6 +73,43 @@ data class Machine (
             count ++
         }
         // NOT REACHED
+    }
+
+    /**
+     * Calculate the minimum number of button presses to yield the expected joltage setting.
+     */
+
+    fun minJoltages (): Int {
+
+        // Let's figure out the minumum number of buttons that need to be pressed
+
+        val minPresses = joltages.min ()
+        println ("minPresses=$minPresses")
+
+        // Let's figure out the maximum number of times each button could be pressed
+
+        val maxPresses = buildList {
+            buttons.forEachIndexed { i, buttons ->
+                val max = buttons.map {
+                    joltages [it]
+                }
+                add (max.max ())
+            }
+        }
+        println ("maxPresses=$maxPresses")
+
+        var min = Integer.MAX_VALUE
+        val possible = permute2 (maxPresses, minPresses)
+        possible.forEach { buttons ->
+            resetJoltages ()
+            buttons.forEachIndexed { i, times ->
+                pressJoltages (i, times)
+            }
+            if (joltages == voltages) {
+                min = min (min, buttons.sum ())
+            }
+        }
+        return min
     }
 
     companion object {
@@ -92,7 +145,10 @@ data class Machine (
 }
 
 fun main () {
-    println (Machine.parse ("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}"))
+//    val machine = Machine.parse ("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}")
+    val machine = Machine.parse ("[.#...#...#] (3,5,7,8) (0,3,4) (0,1,2,3,4,7,9) (0,1,3,4,6,7,9) (1,4,5,6,8) (0,1,6,9) (0,2,3,4,5,7,8,9) (1,2,5,6,7,9) (0,2,3,5,6,7,8,9) (0,2,3,4,5,7,8) {46,36,54,60,41,78,47,75,59,57}")
+    println (machine)
+    println (machine.minJoltages())
     return
 }
 

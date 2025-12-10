@@ -1,6 +1,7 @@
 package day9
 
 import util.InputUtil
+import kotlin.math.abs
 
 val DAY = 9
 val SAMPLE = false
@@ -52,7 +53,7 @@ data class Point (val row: Long, val col: Long) {
 
 data class Rectangle (val start: Point, val end: Point) {
     val size: Long
-        get () = (end.col - start.col + 1) * (end.row - start.row + 1)
+        get () = (abs (end.col - start.col) + 1) * (abs (end.row - start.row) + 1)
 
     fun contains (other: Point): Boolean {
         return other.row > start.row

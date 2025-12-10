@@ -63,25 +63,21 @@ class Grid (input: String) {
 
     fun isComplete (rect: Rectangle): Boolean {
         for (row in rect.start.row .. rect.end.row) {
-            for (col in rect.start.col .. rect.end.col) {
-                if (!isInternal(row, col)) {
-                    return false
-                }
+            if (! isInternal(row, rect.start.col)) {
+                return false
+            }
+            if (! isInternal(row, rect.end.col)) {
+                return false
             }
         }
-//        for (row in rect.start.row .. rect.end.row) {
-//            if (! isInternal(row, rect.end.col)) {
-//                return false
-//            }
-//        }
-//        for (col in rect.start.col .. rect.end.col) {
-//            if (! isInternal(rect.start.row, col)) {
-//                return false
-//            }
-//            if (! isInternal(rect.end.row, col)) {
-//                return false
-//            }
-//        }
+        for (col in rect.start.col .. rect.end.col) {
+            if (! isInternal(rect.start.row, col)) {
+                return false
+            }
+            if (! isInternal(rect.end.row, col)) {
+                return false
+            }
+        }
 
         return true
     }
@@ -98,7 +94,7 @@ class Grid (input: String) {
                 val corner = local[i]
                 for (j in i + 1 until local.size) {
                     val other = local[j]
-                    if (other.row >= corner.row && other.col >= corner.col) {
+                    if (other.row >= corner.row) {
                         add (Rectangle (corner, other))
                     }
                 }
@@ -119,13 +115,13 @@ class Grid (input: String) {
             if (maybeV.isNotEmpty()) {
                 return true
             } else {
-                val intersect = vertical.filter {
+                val intersectV = vertical.filter {
                     row >= it.p0.row && row < it.p1.row
                 }.filter {
                     col <= it.p0.col
                 }
-                val count = intersect.count ()
-                return count % 2 == 1
+                val countV = intersectV.count ()
+                return countV % 2 == 1
             }
         }
     }

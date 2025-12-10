@@ -11,14 +11,27 @@ fun main () {
 
     // part1
 
-    val part1 = run {
+//    val part1 = run {
+//        var total = 0
+//        puzzle.machines.forEach {
+//            total += it.minPresses ()
+//        }
+//        total
+//    }
+//    println ("part1=$part1")
+
+    // part2
+
+    val part2 = run {
         var total = 0
-        puzzle.machines.forEach {
-            total += it.minPresses ()
+        puzzle.machines.forEachIndexed { index, machine ->
+            println ("Machine $index of ${puzzle.machines.size}")
+            total += machine.minJoltages()
         }
         total
     }
-    println ("part1=$part1")
+    println ("part2=$part2")
+
 
     return
 }

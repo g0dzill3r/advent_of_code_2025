@@ -27,12 +27,12 @@ data class Machine (
     val joltages: List<Int>,
     var state: MutableList<Boolean> = expected.map { false }.toMutableList ()
 ) {
-    fun reset () {
+    private fun reset () {
         state = expected.map { false }.toMutableList()
         return
     }
 
-    fun press (button: Int, times: Int) {
+    private fun press (button: Int, times: Int) {
         if (times % 2 == 1) {
             buttons[button].forEach {
                 state[it] = ! state[it]
@@ -93,7 +93,7 @@ data class Machine (
 
 fun main () {
     println (Machine.parse ("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}"))
-//    println (Machine.parse ("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}"))
+    return
 }
 
 // EOF

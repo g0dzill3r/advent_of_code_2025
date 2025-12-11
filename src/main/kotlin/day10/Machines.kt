@@ -81,7 +81,7 @@ data class Machine (
 
     fun minJoltages (): Int {
 
-        // Let's figure out the minumum number of buttons that need to be pressed
+        // Let's figure out the minimum number of buttons that need to be pressed
 
         val minPresses = joltages.min ()
         println ("minPresses=$minPresses")
@@ -112,6 +112,29 @@ data class Machine (
         return min
     }
 
+    /**
+     * Figure out the possible number of times that each button could be pressed without
+     * exceeding one of the joltages.
+     */
+
+    val maxPresses: List<Int>
+        get () {
+            return buttons.mapIndexed { i, buttons ->
+                val min = buttons.map {
+                    joltages[it]
+                }
+                min.min()
+            }
+        }
+
+    /**
+     * Solver for part2.
+     */
+
+//    fun solver (match: MutableList<List<Int>> = mutableListOf ()): List<List<Int>> {
+//
+//    }
+
     companion object {
         private val pattern = Pattern.compile ("(\\[[\\.#]+\\]) (\\(.+\\)) (\\{\\d+(?:,\\d+)*\\})")
 
@@ -134,7 +157,7 @@ data class Machine (
                     it.substring (1, it.length - 1).split ( ',').map {
                         it.toInt ()
                     }
-                }
+                }.sortedByDescending { it.size }
             }
             val joltages = matcher.group (3).let {
                 it.substring (1, it.length - 1).split (",").map { it.toInt () }
@@ -147,8 +170,11 @@ data class Machine (
 fun main () {
 //    val machine = Machine.parse ("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}")
     val machine = Machine.parse ("[.#...#...#] (3,5,7,8) (0,3,4) (0,1,2,3,4,7,9) (0,1,3,4,6,7,9) (1,4,5,6,8) (0,1,6,9) (0,2,3,4,5,7,8,9) (1,2,5,6,7,9) (0,2,3,5,6,7,8,9) (0,2,3,4,5,7,8) {46,36,54,60,41,78,47,75,59,57}")
-    println (machine)
-    println (machine.minJoltages())
+    println ("""
+        buttons=${machine.buttons}
+        joltages=${machine.joltages}
+    """.trimIndent())
+    println (machine.maxPresses)
     return
 }
 

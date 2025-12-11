@@ -28,6 +28,7 @@ dependencies {
     implementation ("com.etherfirma:kotlin-server:$kotlinServer_version")
     // logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("org.apache.commons:commons-math3:3.6.1")
 }
 
 tasks.test {

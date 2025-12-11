@@ -111,15 +111,6 @@ data class Puzzle (val rows: List<Device>) {
 
 }
 data class Device (val name: String, val devices: List<String>) {
-    val outputs = mutableListOf<Device> ()
-
-    fun patch (map: Map<String, Device>) {
-        devices.forEach {
-            outputs.add (map[it] !!)
-        }
-        return
-    }
-
     companion object {
         fun parse(input: String): Device {
             val (name, rest) = input.split (": ")

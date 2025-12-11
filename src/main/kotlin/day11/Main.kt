@@ -66,26 +66,23 @@ data class Puzzle (val rows: List<Device>) {
     }
 
     private fun goesOut (from: String, found: MutableMap<String, Boolean>): Boolean {
-        var result = false
-        if (found.containsKey (from)) {
-            return found[from] as Boolean
-        }
-        val device = get (from)
-        if (device.devices.contains ("out")) {
-            result = true
-        } else {
-            device.devices.forEach {
-                result = result or goesOut(it, found)
+        return found.getOrPut (from) {
+            val device = get (from)
+            var result = false
+            if (device.devices.contains ("out")) {
+                result = true
+            } else {
+                device.devices.forEach {
+                    result = result or goesOut(it, found)
+                }
             }
+            found[from] = result
+            return result
         }
-        found[from] = result
-        return result
     }
 
     fun count (from: String, to: String, cache: MutableMap<String, Long> = mutableMapOf ()): Long {
-        return if (cache.containsKey (from)) {
-            cache[from] as Long
-        } else {
+        return cache.getOrPut (from) {
             var total = 0L
             val device = get (from)
             device.devices.forEach {
@@ -108,8 +105,8 @@ data class Puzzle (val rows: List<Device>) {
             return Puzzle (devices)
         }
     }
-
 }
+
 data class Device (val name: String, val devices: List<String>) {
     companion object {
         fun parse(input: String): Device {

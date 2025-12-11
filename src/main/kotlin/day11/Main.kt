@@ -5,14 +5,6 @@ import util.InputUtil
 val DAY = 11
 val SAMPLE = false
 
-/**
- * Too low
- *
- * a + c + b + d =                                   981435186889
- * (a + f) + (b + e) + (a + c + e) + (b + d + f)) = 1962866629213
- * nope                                             4600390479201
- */
-
 fun main () {
     val input = InputUtil.getInput(DAY, SAMPLE)
     val puzzle = Puzzle.parse (input)
@@ -40,7 +32,8 @@ fun main () {
     val e = puzzle.count ("fft", "out")
     val f = puzzle.count ("dac", "out")
 
-    println (a * c * e + b * d * f)
+    val part2 = a * c * e + b * d * f
+    println ("part2=$part2")
     return
 }
 

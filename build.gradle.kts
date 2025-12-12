@@ -28,7 +28,9 @@ dependencies {
     implementation ("com.etherfirma:kotlin-server:$kotlinServer_version")
     // logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("org.apache.commons:commons-math3:3.6.1")
+    // linear solver
+    implementation("org.ojalgo:ojalgo:56.1.1")
+    implementation("org.choco-solver:choco-solver:5.0.0-beta.1")
 }
 
 tasks.test {

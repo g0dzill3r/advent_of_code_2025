@@ -1,5 +1,8 @@
 package day10
 
+import com.etherfirma.util.toList
+import day10.Machine.Checker
+import java.util.*
 import java.util.regex.Pattern
 import kotlin.math.min
 
@@ -29,48 +32,52 @@ data class Machine (
     var state: MutableList<Boolean> = expected.map { false }.toMutableList (),
     var voltages: MutableList<Int> = joltages.map { 0 }.toMutableList()
 ) {
-    private fun reset () {
+    private fun reset() {
         state = expected.map { false }.toMutableList()
         return
     }
 
-    private fun resetJoltages () {
+    private fun resetJoltages() {
         voltages = joltages.map { 0 }.toMutableList()
         return
     }
 
-    private fun press (button: Int, times: Int) {
+    private fun press(button: Int, times: Int) {
         if (times % 2 == 1) {
             buttons[button].forEach {
-                state[it] = ! state[it]
+                state[it] = !state[it]
             }
         }
         return
     }
 
-    private fun pressJoltages (button: Int, times: Int) {
+    private fun pressJoltages(button: Int, times: Int) {
         if (times > 0) {
             buttons[button].forEach {
-                voltages [it] += times
+                voltages[it] += times
             }
         }
         return
     }
 
-    fun minPresses (): Int {
+    fun minPresses (match: List<Boolean> = expected): Int {
+        return _minPresses (match).sum ()
+    }
+
+    fun _minPresses (match: List<Boolean>): List<Int> {
         var count = 0
         while (true) {
             val possible = permute (count, buttons.size)
             possible.forEach { buttons ->
-                reset ()
+                reset()
                 buttons.forEachIndexed { i, times ->
                     press (i, times)
                 }
-                if (state == expected) {
-                    return count
+                if (state == match) {
+                    return buttons
                 }
             }
-            count ++
+            count++
         }
         // NOT REACHED
     }
@@ -79,34 +86,34 @@ data class Machine (
      * Calculate the minimum number of button presses to yield the expected joltage setting.
      */
 
-    fun minJoltages (): Int {
+    fun minJoltages(): Int {
 
         // Let's figure out the minimum number of buttons that need to be pressed
 
-        val minPresses = joltages.min ()
-        println ("minPresses=$minPresses")
+        val minPresses = joltages.min()
+        println("minPresses=$minPresses")
 
         // Let's figure out the maximum number of times each button could be pressed
 
         val maxPresses = buildList {
             buttons.forEachIndexed { i, buttons ->
                 val max = buttons.map {
-                    joltages [it]
+                    joltages[it]
                 }
-                add (max.max ())
+                add(max.max())
             }
         }
-        println ("maxPresses=$maxPresses")
+        println("maxPresses=$maxPresses")
 
         var min = Integer.MAX_VALUE
-        val possible = permute2 (maxPresses, minPresses)
+        val possible = permute2(maxPresses, minPresses)
         possible.forEach { buttons ->
-            resetJoltages ()
+            resetJoltages()
             buttons.forEachIndexed { i, times ->
-                pressJoltages (i, times)
+                pressJoltages(i, times)
             }
             if (joltages == voltages) {
-                min = min (min, buttons.sum ())
+                min = min(min, buttons.sum())
             }
         }
         return min
@@ -118,7 +125,7 @@ data class Machine (
      */
 
     val maxPresses: List<Int>
-        get () {
+        get() {
             return buttons.mapIndexed { i, buttons ->
                 val min = buttons.map {
                     joltages[it]
@@ -127,54 +134,174 @@ data class Machine (
             }
         }
 
+    companion object {
+        private val pattern = Pattern.compile("(\\[[\\.#]+\\]) (\\(.+\\)) (\\{\\d+(?:,\\d+)*\\})")
+
+        fun parse(input: String): Machine {
+            val matcher = pattern.matcher(input)
+            if (!matcher.matches()) {
+                throw IllegalArgumentException("Invalid input.")
+            }
+            val buttons = matcher.group(1).let {
+                it.substring(1, it.length - 1).map {
+                    when (it) {
+                        '.' -> false
+                        '#' -> true
+                        else -> throw IllegalArgumentException("Invalid input: $it")
+                    }
+                }
+            }
+            val presses = matcher.group(2).let {
+                it.split(' ').map {
+                    it.substring(1, it.length - 1).split(',').map {
+                        it.toInt()
+                    }
+                }
+            }
+            val joltages = matcher.group(3).let {
+                it.substring(1, it.length - 1).split(",").map { it.toInt() }
+            }
+            return Machine(buttons, presses, joltages)
+        }
+    }
+
     /**
      * Solver for part2.
      */
 
-//    fun solver (match: MutableList<List<Int>> = mutableListOf ()): List<List<Int>> {
-//
-//    }
-
-    companion object {
-        private val pattern = Pattern.compile ("(\\[[\\.#]+\\]) (\\(.+\\)) (\\{\\d+(?:,\\d+)*\\})")
-
-        fun parse (input: String): Machine {
-            val matcher = pattern.matcher(input)
-            if (! matcher.matches()) {
-                throw IllegalArgumentException ("Invalid input.")
-            }
-            val buttons = matcher.group (1).let {
-                it.substring (1, it.length - 1).map {
-                    when (it) {
-                        '.' -> false
-                        '#' -> true
-                        else -> throw IllegalArgumentException ("Invalid input: $it")
-                    }
-                }
-            }
-            val presses = matcher.group (2).let {
-                it.split (' ').map {
-                    it.substring (1, it.length - 1).split ( ',').map {
-                        it.toInt ()
-                    }
-                }.sortedByDescending { it.size }
-            }
-            val joltages = matcher.group (3).let {
-                it.substring (1, it.length - 1).split (",").map { it.toInt () }
-            }
-            return Machine (buttons, presses, joltages)
+    fun part2 (): Int {
+        val solutions = solve(joltages, maxPresses)
+        val clicks = solutions.iterator().toList()
+        return when {
+            clicks.isEmpty() -> -1
+            else -> clicks.map { it.size }.min()
         }
     }
+
+    private fun solve(joltages: List<Int>, maxPresses: List<Int>): Sequence<List<Int>> {
+        println("solve (\n  joltages=$joltages,\n  maxPresses=$maxPresses\n)")
+        return sequence {
+            val checker = Checker (joltages)
+            solve (checker, 0)
+        }
+    }
+
+    inner class Checker(
+        val expected: List<Int>,
+    ) {
+        val buttonCount: Int = maxPresses.size
+        val jstack = Stack<MutableList<Int>> ().apply {
+            push (MutableList (buttonCount) { 0 })
+        }
+        val stack = Stack<MutableList<Int>> ().apply {
+            push (MutableList (buttonCount) { 0 })
+        }
+
+        val joltages: MutableList<Int>
+            get () = jstack.peek ()
+
+        val clicks: MutableList<Int>
+            get () = stack.peek ()
+
+        fun click (which: Int, times: Int) {
+            val button = buttons[which]
+            button.forEach {
+                joltages[it] += times
+            }
+            clicks[which] += times
+            return
+        }
+
+        fun maxPresses (which: Int): Int {
+            val list = buildList {
+                buttons[which].forEach { button ->
+                    add (expected[button] - joltages[button])
+                }
+            }
+            return list.min ()
+        }
+
+        fun push () {
+            val copy = mutableListOf<Int>().apply {
+                addAll (stack.peek ())
+            }
+            stack.push (copy)
+            val jcopy = mutableListOf<Int> ().apply {
+                addAll (jstack.peek ())
+            }
+            jstack.push (jcopy)
+            return
+        }
+
+        fun pop () {
+            stack.pop ()
+            jstack.pop ()
+            return
+        }
+
+        val isSolved: Boolean
+            get () = expected == jstack
+
+        val isValid: Boolean
+            get () {
+                joltages.forEachIndexed { i, j ->
+                    if (j > expected[i]) {
+                        return false
+                    }
+                }
+                return true
+            }
+
+        override fun toString(): String {
+            return "Checker(clicks=$clicks, joltages=$joltages)"
+        }
+    }
+}
+
+private suspend fun SequenceScope<List<Int>>.solve(checker: Checker, i: Int) {
+//    println("solve ($checker, $i)")
+
+    // Figure out the max presses for this button based on the existing clicks
+    // so we don't do any unnecessary tests
+
+    val maxPresses = checker.maxPresses (i)
+
+    // Loop through the possible presses for this button
+
+    for (click in maxPresses downTo 0) {
+        checker.push ()
+        checker.click (i, click)
+
+        if (! checker.isValid) {
+            checker.pop ()
+            continue
+        }
+
+        if (checker.isSolved) {
+            yield (checker.clicks.toList ())
+            checker.pop ()
+            break
+        }
+
+        println ("CONSIDER ${checker.clicks}")
+
+        // Move on to processing the next button unless we're done
+
+        if (i < checker.buttonCount - 1) {
+            solve (checker, i + 1)
+        }
+
+        checker.pop ()
+    }
+
+    return
 }
 
 fun main () {
 //    val machine = Machine.parse ("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}")
     val machine = Machine.parse ("[.#...#...#] (3,5,7,8) (0,3,4) (0,1,2,3,4,7,9) (0,1,3,4,6,7,9) (1,4,5,6,8) (0,1,6,9) (0,2,3,4,5,7,8,9) (1,2,5,6,7,9) (0,2,3,5,6,7,8,9) (0,2,3,4,5,7,8) {46,36,54,60,41,78,47,75,59,57}")
-    println ("""
-        buttons=${machine.buttons}
-        joltages=${machine.joltages}
-    """.trimIndent())
-    println (machine.maxPresses)
+    val min = machine.minPresses ()
+    println (min)
     return
 }
 
